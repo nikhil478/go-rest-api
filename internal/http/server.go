@@ -15,7 +15,7 @@ func StartHTTPServer() {
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodPatch,
-			http.MethodOptions, http.MethodDelete, http.MethodHead, http.MethodTrace},
+			http.MethodOptions, http.MethodDelete},
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
 	}))
