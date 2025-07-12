@@ -3,10 +3,15 @@ package http
 import (
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/nikhil478/go-rest-api/internal/http/handlers"
 )
 
 func StartHTTPServer() {
@@ -18,21 +23,28 @@ func StartHTTPServer() {
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
 	}))
-	
+
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
 	r.Route("/users", func(r chi.Router) {
-		r.Post("/", func(w http.ResponseWriter, r *http.Request) {})
-		r.Get("/", func(w http.ResponseWriter, r *http.Request) {})
-		r.Get("/{userID}", func(w http.ResponseWriter, r *http.Request) {})
-		r.Put("/{userID}", func(w http.ResponseWriter, r *http.Request) {})
-		r.Delete("/{userID}", func(w http.ResponseWriter, r *http.Request) {})
+		r.Post("/", handlers.CreateUser)
+		r.Get("/", handlers.GetAllUser)
+		r.Get("/{userID}", handlers.GetUserByID)
+		r.Put("/{userID}", handlers.UpdateUser)
+		r.Delete("/{userID}", handlers.DeleteUser)
 	})
+
+	quit := make(chan os.Signal, 1)
+
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		log.Fatalf("error while init http server on port %s", ":8080")
 	}
+
+	time.Sleep(5 * time.Second)
+	<-quit
 }
