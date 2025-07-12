@@ -32,9 +32,9 @@ func StartHTTPServer() {
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/", handlers.CreateUser)
 		r.Get("/", handlers.GetAllUser)
-		r.Get("/{userID}", handlers.GetUserByID)
-		r.Put("/{userID}", handlers.UpdateUser)
-		r.Delete("/{userID}", handlers.DeleteUser)
+		r.Get("/id", handlers.GetUserByID)
+		r.Put("/id", handlers.UpdateUser)
+		r.Delete("/id", handlers.DeleteUser)
 	})
 
 	quit := make(chan os.Signal, 1)

@@ -11,23 +11,23 @@ import (
 var users []*models.User
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	user := &models.User{}
-	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
+	user := models.User{}
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		common.SendErrorResponse(w, "Error while decoding body")
 	}
-	users = append(users, user)
-	common.SendPlainResponse(w, user)
+	users = append(users, &user)
+	common.SendResponse(w, user)
 }
 
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
-	common.SendPlainResponse(w, users)
+	common.SendResponse(w, users)
 }
 
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userID := r.URL.Query().Get("userID")
 	for _, user := range users {
 		if user.UserID == userID {
-			common.SendPlainResponse(w, user)
+			common.SendResponse(w, user)
 			return
 		}
 	}
@@ -38,7 +38,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userID := r.URL.Query().Get("userID")
 	for _, user := range users {
 		if user.UserID == userID {
-			common.SendPlainResponse(w, user)
+			common.SendResponse(w, user)
 			return
 		}
 	}
@@ -50,7 +50,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	for i, user := range users {
 		if user.UserID == userID {
 			users = append(users[:i], users[i+1:]...)
-			common.SendPlainResponse(w, "User deleted successfully")
+			common.SendResponse(w, "User deleted successfully")
 			return
 		}
 	}

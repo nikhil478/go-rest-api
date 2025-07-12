@@ -1,20 +1,21 @@
 package common
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
 
-func SendPlainResponse(w http.ResponseWriter, data any) {
-	w.Header().Set("Content-Type", "text/plain")
+func SendResponse(w http.ResponseWriter, data any) {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	_, err := fmt.Fprint(w, data)
-	if err != nil {
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		http.Error(w, "Failed to encode JSON response", http.StatusInternalServerError)
 	}
 }
+
 
 
 func SendErrorResponse(w http.ResponseWriter, data any) {
