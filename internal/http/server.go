@@ -12,9 +12,18 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/nikhil478/go-rest-api/internal/http/handlers"
+	"github.com/spf13/viper"
 )
 
 func StartHTTPServer() {
+
+	viper.AddConfigPath(".")
+	viper.SetConfigName("secrets")
+	viper.SetConfigType("yaml")
+
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatalf("Failed to read config: %v", err)
+	}
 
 	r := chi.NewRouter()
 	r.Use(cors.Handler(cors.Options{
@@ -41,10 +50,12 @@ func StartHTTPServer() {
 
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
+	port := viper.GetString("app.port")
+
 	go func() {
-		log.Default().Printf("Server started on port %s", ":8080")
-		if err := http.ListenAndServe(":8080", r); err != nil {
-			log.Fatalf("error while init http server on port %s", ":8080")
+		log.Default().Printf("Server started on port %s", port)
+		if err := http.ListenAndServe(port, r); err != nil {
+			log.Fatalf("error while init http server on port %s", port)
 		}
 	}()
 
