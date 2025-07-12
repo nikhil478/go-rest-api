@@ -41,9 +41,12 @@ func StartHTTPServer() {
 
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
-	if err := http.ListenAndServe(":8080", r); err != nil {
-		log.Fatalf("error while init http server on port %s", ":8080")
-	}
+	go func() {
+		log.Default().Printf("Server started on port %s", ":8080")
+		if err := http.ListenAndServe(":8080", r); err != nil {
+			log.Fatalf("error while init http server on port %s", ":8080")
+		}
+	}()
 
 	time.Sleep(5 * time.Second)
 	<-quit
