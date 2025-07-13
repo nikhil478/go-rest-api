@@ -12,6 +12,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/nikhil478/go-rest-api/internal/http/handlers"
+	"github.com/nikhil478/go-rest-api/internal/monitor/metrics"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
 )
 
@@ -37,6 +39,13 @@ func StartHTTPServer() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(metrics.HTTPMetricsMiddleware)
+
+
+	_, err := metrics.InitOTelMetrics("go-rest-api")
+	if err != nil {
+		log.Fatalf("Failed to init metrics : %v", err)
+	}
 
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/", handlers.CreateUser)
@@ -45,6 +54,8 @@ func StartHTTPServer() {
 		r.Put("/id", handlers.UpdateUser)
 		r.Delete("/id", handlers.DeleteUser)
 	})
+
+	r.Handle("/metrics", promhttp.Handler())
 
 	quit := make(chan os.Signal, 1)
 

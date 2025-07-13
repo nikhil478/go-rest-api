@@ -6,7 +6,6 @@ import (
 	"net/http"
 )
 
-
 func SendResponse(w http.ResponseWriter, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -15,8 +14,6 @@ func SendResponse(w http.ResponseWriter, data any) {
 		http.Error(w, "Failed to encode JSON response", http.StatusInternalServerError)
 	}
 }
-
-
 
 func SendErrorResponse(w http.ResponseWriter, data any) {
 	w.Header().Set("Content-Type", "text/plain")
