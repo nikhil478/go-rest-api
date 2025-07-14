@@ -41,11 +41,18 @@ func StartHTTPServer() {
 	r.Use(middleware.Recoverer)
 	r.Use(metrics.HTTPMetricsMiddleware)
 
-
 	_, err := metrics.InitOTelMetrics("go-rest-api")
 	if err != nil {
 		log.Fatalf("Failed to init metrics : %v", err)
 	}
+
+	r.Route("/app", func(r chi.Router) {
+		r.Post("/", handlers.CreateApp)
+		r.Get("/", handlers.GetAllApp)
+		r.Get("/name", handlers.GetAppByName)
+		r.Put("/id", handlers.UpdateApp)
+		r.Delete("/id", handlers.DeleteApp)
+	})
 
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/", handlers.CreateUser)
