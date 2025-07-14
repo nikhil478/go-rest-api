@@ -20,7 +20,7 @@ func CreateApp(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllApp(w http.ResponseWriter, r *http.Request) {
-	common.SendResponse(w, users)
+	common.SendResponse(w, apps)
 }
 
 func GetAppByName(w http.ResponseWriter, r *http.Request) {
